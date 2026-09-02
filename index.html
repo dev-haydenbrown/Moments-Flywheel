@@ -1,0 +1,752 @@
+<meta charset="utf-8">
+<title>Moments™ Flywheel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
+<style>
+:root{
+  /* inline style from the viewer shell would otherwise flip this to dark */
+  color-scheme:light !important;
+  --bg:hsl(225 20% 98%);--fg:hsl(222 47% 11%);
+  --card:hsl(228 22% 96%);--card-fg:hsl(222 47% 11%);
+  --primary:hsl(231 90% 60%);--primary-fg:#fff;
+  --muted:hsl(220 16% 95%);--muted-fg:hsl(220 9% 46%);
+  --border:hsl(224 16% 89%);--input:hsl(224 16% 89%);
+  --success:hsl(152 56% 42%);--success-fg:#fff;
+  --warning:hsl(38 85% 50%);--warning-fg:#fff;
+  --destructive:hsl(0 72% 51%);
+  --sidebar-bg:hsl(230 25% 95%);--sidebar-fg:hsl(220 12% 42%);
+  --sidebar-active:hsl(230 22% 91%);--sidebar-primary:hsl(231 90% 60%);
+  --radius:0.625rem;--surface:#fff;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-lg:0 4px 16px rgba(0,0,0,.1),0 2px 4px rgba(0,0,0,.06);
+}
+/* Locked to the Revenue Roleplay AI light palette — this is a faithful mock of
+   the real product UI, so it renders the same regardless of viewer theme. */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--fg);font-size:14px;line-height:1.55;height:100vh;display:flex;overflow:hidden}
+button,input,textarea,select{font-family:inherit}
+a{color:var(--primary);text-decoration:none}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{width:210px;flex-shrink:0;background:var(--sidebar-bg);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;overflow-y:auto}
+.sb-logo{padding:18px 16px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.sb-logo-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,hsl(231 90% 60%),hsl(258 70% 62%));display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0}
+.sb-logo-text{font-size:13.5px;font-weight:700;color:var(--fg);line-height:1.2}
+.sb-logo-text span{font-weight:500;color:var(--primary)}
+.sb-nav{padding:8px;flex:1}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:500;color:var(--sidebar-fg);cursor:pointer;transition:all .12s;border:none;background:none;width:100%;text-align:left;margin-bottom:1px}
+.sb-item:hover{background:var(--sidebar-active);color:var(--fg)}
+.sb-item.active{background:var(--sidebar-active);color:var(--fg);font-weight:600}
+.sb-item svg{width:17px;height:17px;flex-shrink:0;opacity:.65}
+.sb-item.active svg{opacity:1}
+.sb-divider{height:1px;background:var(--border);margin:10px 12px}
+.sb-section-label{padding:10px 12px 4px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-fg)}
+.sb-badge{margin-left:auto;font-size:10px;font-weight:700;background:hsl(38 85% 50%/.15);color:var(--warning);padding:2px 8px;border-radius:10px;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.sb-badge.pulse{transform:scale(1.5)}
+.sb-badge.done{background:hsl(152 56% 42%/.12);color:var(--success)}
+.sb-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.sb-avatar{width:28px;height:28px;border-radius:50%;background:var(--primary);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-user-name{font-size:12.5px;font-weight:600;color:var(--fg)}
+.sb-user-org{font-size:11px;color:var(--muted-fg)}
+
+/* ═══ MAIN ═══ */
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.page{display:none;flex:1;overflow:hidden;flex-direction:column}
+.page.active{display:flex}
+
+/* ═══ BUTTONS ═══ */
+.btn{padding:7px 14px;font-size:13px;font-weight:500;border-radius:8px;border:1px solid transparent;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--primary);color:var(--primary-fg);border-color:var(--primary)}
+.btn-primary:hover{filter:brightness(1.1)}
+.btn-success{background:var(--success);color:var(--success-fg)}
+.btn-success:hover{filter:brightness(1.1)}
+.btn-ghost{background:var(--surface);color:var(--fg);border-color:var(--border)}
+.btn-ghost:hover{background:var(--muted)}
+.btn-danger{background:none;color:var(--destructive);border-color:var(--border)}
+.btn-danger:hover{background:hsl(0 72% 51%/.06)}
+.btn-sm{padding:5px 10px;font-size:12px;border-radius:6px}
+.btn:disabled{opacity:.4;cursor:default;pointer-events:none}
+.btn-sent{background:hsl(152 56% 42%/.08)!important;color:var(--success)!important;border-color:hsl(152 56% 42%/.18)!important;cursor:default;pointer-events:none}
+
+/* ═══ CHIPS ═══ */
+.chip{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.chip-top{background:hsl(152 56% 42%/.1);color:var(--success)}
+.chip-comp{background:hsl(0 72% 51%/.07);color:var(--destructive)}
+.chip-obj{background:hsl(38 85% 50%/.1);color:var(--warning)}
+.chip-diff{background:hsl(231 90% 60%/.1);color:var(--primary)}
+.chip-easy{background:hsl(152 56% 42%/.1);color:var(--success);font-size:11px;padding:2px 8px;border-radius:5px}
+.chip-hard{background:hsl(0 72% 51%/.1);color:var(--destructive);font-size:11px;padding:2px 8px;border-radius:5px}
+.new-pill{font-size:9px;font-weight:700;letter-spacing:.04em;background:var(--primary);color:#fff;padding:2px 7px;border-radius:3px;animation:popIn .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* ═══════════════════════════════════════
+   PAGE: HOME (Flywheel Overview)
+═══════════════════════════════════════ */
+.home-page{flex:1;overflow-y:auto;padding:28px 32px}
+.home-welcome{margin-bottom:6px}
+.home-welcome h1{font-size:22px;font-weight:700;letter-spacing:-.02em}
+.home-welcome p{font-size:14px;color:var(--muted-fg);max-width:600px;margin-top:4px}
+.home-stats{display:flex;gap:12px;margin:20px 0;font-size:13px;color:var(--muted-fg)}
+.home-stats strong{color:var(--fg);font-weight:600}
+.home-stats .sep{color:var(--border)}
+
+/* Flywheel diagram */
+.fw-wrap{margin-bottom:28px}
+.fw-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-fg);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.fw-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.fw-track{display:flex;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;background:var(--surface);box-shadow:var(--shadow-sm)}
+.fw-step{flex:1;min-width:0;padding:14px 14px;border-right:1px solid var(--border);cursor:pointer;transition:background .12s}
+.fw-step:last-child{border-right:none}
+.fw-step:hover{background:var(--card)}
+.fw-step.done{background:hsl(152 56% 42%/.05)}
+.fw-step.now{background:hsl(231 90% 60%/.05)}
+.fw-step.ahead{opacity:.55}
+.fw-num{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted-fg);margin-bottom:6px}
+.fw-step.done .fw-num{color:var(--success)}
+.fw-step.now .fw-num{color:var(--primary)}
+.fw-icon{font-size:16px;margin-bottom:5px}
+.fw-name{font-size:11.5px;font-weight:700;color:var(--fg);margin-bottom:2px}
+.fw-desc{font-size:10.5px;color:var(--muted-fg);line-height:1.4}
+.fw-bridge{text-align:center;margin:10px 0;font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted-fg)}
+.fw-bridge .arrow{font-size:16px;color:var(--primary);display:block}
+
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow-sm)}
+.stat-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-fg);margin-bottom:8px}
+.stat-val{font-size:28px;font-weight:700;color:var(--fg);line-height:1;letter-spacing:-.03em}
+.stat-delta{font-size:11.5px;color:var(--success);margin-top:5px;font-weight:500}
+.stat-delta.neutral{color:var(--warning)}
+
+/* Activity feed */
+.af{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:24px}
+.af-hdr{padding:12px 18px;border-bottom:1px solid var(--border);background:var(--card);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-fg)}
+.af-row{padding:11px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;font-size:13px}
+.af-row:last-child{border-bottom:none}
+.af-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.af-text{flex:1;color:var(--fg)}
+.af-text strong{font-weight:600}
+.af-time{font-size:11px;color:var(--muted-fg);flex-shrink:0}
+
+/* Quick Start cards */
+.qs-title{font-size:16px;font-weight:700;margin-bottom:4px}
+.qs-sub{font-size:13px;color:var(--muted-fg);margin-bottom:14px}
+.qs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+@media(max-width:900px){.qs-grid{grid-template-columns:1fr}}
+.qs-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .12s;box-shadow:var(--shadow-sm)}
+.qs-card:hover{box-shadow:var(--shadow);border-color:var(--primary)}
+.qs-card-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.qs-card-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0}
+.qs-card-name{font-size:13px;font-weight:700;color:var(--fg)}
+.qs-card-role{font-size:11px;color:var(--muted-fg)}
+.qs-card-score{margin-left:auto;font-size:18px;font-weight:700;flex-shrink:0}
+.score-high{color:var(--success)}
+.score-mid{color:var(--warning)}
+.qs-card-scenario{font-size:12px;color:var(--muted-fg);line-height:1.45;margin-bottom:8px}
+.qs-card-bottom{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted-fg);flex-wrap:wrap}
+.qs-tracks{color:var(--success);font-weight:600}
+
+/* ═══════════════════════════════════════
+   PAGE: SESSION DETAIL
+═══════════════════════════════════════ */
+.topbar{padding:12px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;background:var(--surface);flex-shrink:0;flex-wrap:wrap}
+.topbar-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.topbar-info{flex:1;min-width:0}
+.topbar-name{font-size:14px;font-weight:700;color:var(--fg)}
+.topbar-meta{font-size:12px;color:var(--muted-fg)}
+.topbar-actions{display:flex;gap:6px;flex-wrap:wrap}
+.session-split{flex:1;display:flex;overflow:hidden}
+.session-content{flex:1;overflow-y:auto;padding:24px 28px}
+.session-transcript{width:340px;flex-shrink:0;border-left:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;overflow:hidden}
+
+/* Score */
+.score-hero{display:flex;align-items:center;gap:24px;margin-bottom:20px;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius)}
+.score-ring{position:relative;width:80px;height:80px;flex-shrink:0}
+.score-ring svg{transform:rotate(-90deg)}
+.score-ring-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:var(--fg)}
+.score-details{flex:1}
+.score-grade{font-size:14px;font-weight:700;color:var(--success);margin-bottom:4px}
+.score-note{font-size:12px;color:var(--muted-fg);line-height:1.5}
+
+/* Score bars */
+.score-bars{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px}
+@media(max-width:900px){.score-bars{grid-template-columns:repeat(2,1fr)}}
+.sbar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+.sbar-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted-fg);margin-bottom:8px}
+.sbar-track{height:4px;background:var(--muted);border-radius:2px;overflow:hidden;margin-bottom:6px}
+.sbar-fill{height:100%;border-radius:2px;width:0;transition:width .9s cubic-bezier(.22,.61,.36,1)}
+.fill-g{background:var(--success)}.fill-a{background:var(--warning)}
+.sbar-num{font-size:18px;font-weight:700;color:var(--fg);letter-spacing:-.02em}
+
+.summary-text{font-size:14px;color:var(--fg);line-height:1.7;margin-bottom:24px}
+.eval-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+@media(max-width:900px){.eval-grid{grid-template-columns:1fr}}
+.eval-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.eval-panel h3{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.eval-panel.done h3{color:var(--success)}.eval-panel.focus h3{color:var(--primary)}
+.eval-panel ul{list-style:none}
+.eval-panel li{font-size:12.5px;color:var(--fg);line-height:1.5;padding:5px 0 5px 12px;border-left:2px solid}
+.eval-panel.done li{border-color:var(--success)}.eval-panel.focus li{border-color:var(--primary)}
+
+/* Rubric */
+.rubric{margin-bottom:24px}
+.rubric-title{font-size:14px;font-weight:700;margin-bottom:8px}
+.rubric-row{font-size:12.5px;line-height:1.6;margin-bottom:5px}
+.rubric-row .lbl{font-weight:600;margin-right:2px}
+.lbl.green{color:var(--success)}.lbl.amber{color:var(--warning)}.lbl.blue{color:var(--primary)}
+
+/* Replay moments */
+.replay{margin-bottom:28px}
+.replay h2{font-size:16px;font-weight:700;margin-bottom:14px}
+.rp-card{border-left:3px solid var(--warning);background:var(--surface);border-radius:0 var(--radius) var(--radius) 0;border-top:1px solid var(--border);border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:14px 16px;margin-bottom:10px}
+.rp-num{font-size:11px;font-weight:700;color:var(--warning);margin-bottom:4px}
+.rp-title{font-size:13px;font-weight:600;color:var(--fg);margin-bottom:3px}
+.rp-desc{font-size:12px;color:var(--muted-fg);line-height:1.5;margin-bottom:5px}
+.rp-link{font-size:12px;color:var(--primary);font-weight:500;cursor:pointer}
+
+/* ═══ WINNING TALK TRACKS ═══ */
+.wtt{margin-bottom:28px}
+.wtt h2{font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.wtt h2 .feat{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:hsl(231 90% 60%/.08);color:var(--primary);padding:3px 9px;border-radius:5px}
+.wtt-sub{font-size:12.5px;color:var(--muted-fg);margin-bottom:16px;max-width:580px}
+.wtt-card{border-left:3px solid var(--success);background:var(--surface);border-radius:0 var(--radius) var(--radius) 0;border-top:1px solid var(--border);border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:16px 18px;margin-bottom:10px;transition:all .2s}
+.wtt-card:hover{box-shadow:var(--shadow)}
+.wtt-top{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.wtt-ts{font-size:11px;color:var(--muted-fg);margin-left:auto}
+.wtt-quote{font-size:14px;font-style:italic;color:var(--fg);line-height:1.7;margin-bottom:8px}
+.wtt-shift{font-size:11.5px;color:var(--success);font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:4px}
+.wtt-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ═══ TRANSCRIPT ═══ */
+.tx-hdr{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;flex-shrink:0}
+.tx-search{margin-left:auto;padding:5px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--fg);background:var(--bg);width:110px}
+.tx-search:focus{outline:2px solid var(--primary);outline-offset:-1px}
+.tx-body{flex:1;overflow-y:auto;padding:14px 16px}
+.tx-msg{margin-bottom:12px}
+.tx-sender{font-size:11px;font-weight:600;margin-bottom:3px;display:flex;align-items:center;gap:6px}
+.tx-sender .tx-time{font-weight:400;color:var(--muted-fg);font-size:10px}
+.tx-bubble{font-size:12.5px;line-height:1.55;padding:10px 14px;border-radius:12px;max-width:92%}
+.tx-ai .tx-sender{color:var(--muted-fg)}.tx-ai .tx-bubble{background:var(--card);color:var(--fg)}
+.tx-rep .tx-sender{color:var(--primary)}.tx-rep .tx-bubble{background:var(--primary);color:#fff}
+.tx-highlight{background:hsl(152 56% 42%/.05);border-radius:var(--radius);margin:-6px -8px;padding:6px 8px}
+.tx-highlight .tx-bubble{border:1.5px solid hsl(152 56% 42%/.3)}
+.tx-highlight .tx-time{color:var(--success)!important}
+
+/* ═══════════════════════════════════════
+   PAGE: MOMENTS™ CONSOLE
+═══════════════════════════════════════ */
+.moments-page{flex:1;overflow-y:auto;padding:28px 32px}
+.moments-page h1{font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
+.moments-page .page-sub{font-size:14px;color:var(--muted-fg);margin-bottom:24px}
+
+.rec-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);margin-bottom:14px;overflow:hidden;transition:opacity .3s,transform .3s}
+.rec-card.entering{animation:slideDown .35s ease}
+@keyframes slideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+.rec-card.leaving{opacity:0;transform:translateX(16px);pointer-events:none}
+.rec-head{padding:12px 18px;border-bottom:1px solid var(--border);background:var(--card);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.rec-head.new-head{background:hsl(231 90% 60%/.05);border-bottom-color:hsl(231 90% 60%/.12)}
+.rec-eye{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-fg);margin-bottom:3px}
+.rec-trigger{font-size:14px;font-weight:700;color:var(--fg);display:flex;align-items:center;gap:8px}
+.rec-from{font-size:11px;color:var(--muted-fg);margin-top:3px;font-style:italic}
+.rec-source{font-size:12px;color:var(--muted-fg);text-align:right}
+.rec-source strong{color:var(--success);font-weight:700}
+.rec-body{padding:16px 18px}
+.rec-quote{font-size:14px;font-style:italic;color:var(--fg);line-height:1.7;border-left:3px solid var(--primary);padding-left:14px;margin-bottom:14px}
+.rec-edit{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-style:italic;color:var(--fg);background:var(--card);resize:vertical;min-height:80px;line-height:1.65;margin-bottom:12px}
+.rec-edit:focus{outline:2px solid var(--primary);outline-offset:1px}
+.rec-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Published */
+.pub-section{margin-top:28px}
+.pub-card{background:hsl(152 56% 42%/.05);border:1px solid hsl(152 56% 42%/.18);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px;animation:slideDown .3s ease}
+.pub-info{flex:1;min-width:0}
+.pub-trigger{font-size:10px;font-weight:700;color:var(--success);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.pub-text{font-size:13px;font-style:italic;color:var(--fg);line-height:1.55}
+.pub-from{font-size:11px;color:var(--muted-fg);margin-top:3px}
+.live-badge{font-size:10px;font-weight:700;background:var(--success);color:#fff;padding:2px 7px;border-radius:4px;flex-shrink:0}
+
+/* Live preview */
+.preview-wrap{max-width:380px;margin-top:24px}
+.preview-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-fg);margin-bottom:10px}
+.preview-shell{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-lg);overflow:hidden}
+.preview-topbar{background:var(--card);border-bottom:1px solid var(--border);padding:8px 14px;font-size:12px;font-weight:600;color:var(--muted-fg);display:flex;align-items:center;gap:6px}
+.preview-body{border-left:4px solid var(--primary);padding:14px 16px}
+.preview-type{font-size:10px;letter-spacing:.08em;color:var(--primary);font-weight:700;text-transform:uppercase;margin-bottom:4px}
+.preview-name{font-size:13px;font-weight:700;color:var(--fg);margin-bottom:6px}
+.preview-content{font-size:12.5px;color:var(--muted-fg);line-height:1.55}
+
+/* ═══ TOAST ═══ */
+.toast{position:fixed;top:14px;right:16px;z-index:900;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--success);border-radius:var(--radius);padding:14px 18px;box-shadow:var(--shadow-lg);max-width:360px;transform:translateX(16px);opacity:0;transition:transform .25s ease,opacity .25s ease;pointer-events:none}
+.toast.show{transform:translateX(0);opacity:1;pointer-events:auto}
+.toast-title{font-size:13px;font-weight:700;color:var(--fg);margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.toast-sub{font-size:12px;color:var(--muted-fg)}
+.toast-action{font-size:12px;color:var(--primary);font-weight:600;margin-top:6px;cursor:pointer;background:none;border:none;padding:0;font-family:inherit;display:block}
+.toast-action:hover{text-decoration:underline}
+
+/* ═══ TRANSFER PARTICLE ═══ */
+.transfer-particle{position:fixed;z-index:800;width:10px;height:10px;border-radius:50%;background:var(--success);box-shadow:0 0 12px hsl(152 56% 42%/.5);pointer-events:none;transition:none}
+
+/* ═══ EMPTY STATE ═══ */
+.empty-state{text-align:center;padding:48px 24px;color:var(--muted-fg)}
+.empty-state .e-icon{font-size:30px;margin-bottom:10px}
+.empty-state h3{font-size:15px;font-weight:700;color:var(--fg);margin-bottom:4px}
+.empty-state p{font-size:13px;max-width:320px;margin:0 auto}
+
+.hidden{display:none!important}
+</style>
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-icon">R</div>
+    <div class="sb-logo-text">Revenue.io<br><span>Roleplay</span></div>
+  </div>
+  <nav class="sb-nav">
+    <button class="sb-item active" onclick="goPage('home',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </button>
+    <button class="sb-item" onclick="goPage('session',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Roleplay
+    </button>
+    <button class="sb-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      Library
+    </button>
+    <button class="sb-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      Objection Playbook
+    </button>
+    <button class="sb-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+      Learning Paths
+    </button>
+    <button class="sb-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Progress
+    </button>
+    <button class="sb-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      Team
+    </button>
+    <div class="sb-divider"></div>
+    <div class="sb-section-label">Flywheel Integration</div>
+    <button class="sb-item" onclick="goPage('moments',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Moments™ Console
+      <span class="sb-badge" id="sb-badge">3</span>
+    </button>
+    <div class="sb-divider"></div>
+    <button class="sb-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Settings
+    </button>
+    <button class="sb-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+      Feedback
+    </button>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-avatar">HB</div>
+    <div><div class="sb-user-name">Hayden Brown</div><div class="sb-user-org">Revenue.io</div></div>
+  </div>
+</div>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<div class="main">
+
+<!-- ══════ HOME ══════ -->
+<div class="page active" id="page-home">
+  <div class="home-page">
+    <div class="home-welcome">
+      <h1>Moments™ Flywheel</h1>
+      <p>A closed-loop integration between Revenue Roleplay AI and Moments™. Winning talk tracks from top-scoring sessions are surfaced as battlecard recommendations — ready for 1-click approval.</p>
+    </div>
+    <div class="home-stats">
+      <span><strong>42</strong> sessions analyzed</span><span class="sep">·</span>
+      <span><strong>14</strong> talk tracks extracted</span><span class="sep">·</span>
+      <span><strong>+19%</strong> avg sentiment lift</span>
+    </div>
+
+    <div class="fw-wrap">
+      <div class="fw-label">Revenue Roleplay AI</div>
+      <div class="fw-track" style="margin-bottom:0">
+        <div class="fw-step done" onclick="goPage('session',document.querySelectorAll('.sb-item')[1])">
+          <div class="fw-num">01 · PRACTICE</div><span class="fw-icon">🎯</span>
+          <div class="fw-name">Roleplay Sessions</div><div class="fw-desc">Reps complete scored AI-coached calls</div>
+        </div>
+        <div class="fw-step done" onclick="goPage('session',document.querySelectorAll('.sb-item')[1])">
+          <div class="fw-num">02 · ANALYZE</div><span class="fw-icon">🔍</span>
+          <div class="fw-name">AI Extractor</div><div class="fw-desc">Sessions &gt;90% surface winning phrases</div>
+        </div>
+      </div>
+      <div class="fw-bridge"><span class="arrow">↓</span>Flywheel Bridge · AI Recommended</div>
+      <div class="fw-label">Revenue.io Moments™</div>
+      <div class="fw-track">
+        <div class="fw-step now" onclick="goPage('moments',document.querySelectorAll('.sb-item')[8])">
+          <div class="fw-num">03 · RECOMMEND</div><span class="fw-icon">✦</span>
+          <div class="fw-name">AI-Suggested Cards</div><div class="fw-desc">Talk tracks queue for manager review</div>
+        </div>
+        <div class="fw-step ahead">
+          <div class="fw-num">04 · APPROVE</div><span class="fw-icon">✓</span>
+          <div class="fw-name">Manager Approval</div><div class="fw-desc">Human approves, edits, or dismisses</div>
+        </div>
+        <div class="fw-step ahead">
+          <div class="fw-num">05 · EXECUTE</div><span class="fw-icon">⚡</span>
+          <div class="fw-name">Live Call Nudge</div><div class="fw-desc">Cards surface to reps in real time</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat"><div class="stat-label">Sessions Analyzed</div><div class="stat-val">42</div><div class="stat-delta">↑ 18 vs. last month</div></div>
+      <div class="stat"><div class="stat-label">Talk Tracks Extracted</div><div class="stat-val">14</div><div class="stat-delta">↑ 5 new this week</div></div>
+      <div class="stat"><div class="stat-label">Pending Approval</div><div class="stat-val" id="stat-pending">3</div><div class="stat-delta neutral">Awaiting review</div></div>
+      <div class="stat"><div class="stat-label">Avg Sentiment Lift</div><div class="stat-val">+19%</div><div class="stat-delta">Across approved cards</div></div>
+    </div>
+
+    <div class="qs-title">Top-Scoring Sessions</div>
+    <div class="qs-sub">Sessions scoring &gt;90% that qualified for winning talk track extraction</div>
+    <div class="qs-grid" id="qs-grid"></div>
+
+    <div class="af">
+      <div class="af-hdr">Recent Pipeline Activity</div>
+      <div class="af-row"><div class="af-dot" style="background:var(--success)"></div><div class="af-text">Marcus Chen completed session · <strong>96%</strong> · 4 talk tracks extracted</div><div class="af-time">30m ago</div></div>
+      <div class="af-row"><div class="af-dot" style="background:var(--primary)"></div><div class="af-text">3 talk tracks sent to Moments™ review queue from Jordan Mitchell's session</div><div class="af-time">2h ago</div></div>
+      <div class="af-row"><div class="af-dot" style="background:var(--success)"></div><div class="af-text">Sara Patel completed session · <strong>91%</strong> · 2 talk tracks extracted</div><div class="af-time">4h ago</div></div>
+      <div class="af-row"><div class="af-dot" style="background:var(--success)"></div><div class="af-text"><strong>"Gong Competitor Mention"</strong> card approved and published live by Sales Director</div><div class="af-time">1d ago</div></div>
+      <div class="af-row"><div class="af-dot" style="background:var(--success)"></div><div class="af-text">Tyler Brooks completed session · <strong>90%</strong> · 3 talk tracks extracted</div><div class="af-time">2d ago</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ SESSION DETAIL ══════ -->
+<div class="page" id="page-session">
+  <div class="topbar">
+    <div class="topbar-avatar" style="background:hsl(231 90% 60%)">JP</div>
+    <div class="topbar-info">
+      <div class="topbar-name">James Park — The Curious Mid-Funnel Director</div>
+      <div class="topbar-meta">Director of Sales Operations · Aug 19, 2026 · 8:47 min</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-ghost btn-sm" onclick="goPage('home',document.querySelectorAll('.sb-item')[0])">← Back to Home</button>
+      <button class="btn btn-ghost btn-sm">↻ Try again</button>
+      <button class="btn btn-ghost btn-sm">↗ Share</button>
+      <button class="btn btn-ghost btn-sm">⟳ Re-analyze</button>
+    </div>
+  </div>
+  <div class="session-split">
+    <div class="session-content" id="session-content">
+      <!-- Score ring -->
+      <div class="score-hero">
+        <div class="score-ring">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="34" fill="none" stroke="var(--muted)" stroke-width="5"/>
+            <circle cx="40" cy="40" r="34" fill="none" stroke="var(--success)" stroke-width="5" stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="213.6" id="score-arc"/>
+          </svg>
+          <div class="score-ring-num">94</div>
+        </div>
+        <div class="score-details">
+          <div class="score-grade">Exemplary</div>
+          <div class="score-note">Qualifies for winning talk track extraction · Threshold: 90%+<br>94 of 100 raw points normalized to the same scale the PDF uses.</div>
+        </div>
+      </div>
+
+      <div class="score-bars" id="score-bars">
+        <div class="sbar"><div class="sbar-label">Methodology</div><div class="sbar-track"><div class="sbar-fill fill-g" data-t="96"></div></div><div class="sbar-num">96%</div></div>
+        <div class="sbar"><div class="sbar-label">Objection Handling</div><div class="sbar-track"><div class="sbar-fill fill-g" data-t="91"></div></div><div class="sbar-num">91%</div></div>
+        <div class="sbar"><div class="sbar-label">Prospect Sentiment</div><div class="sbar-track"><div class="sbar-fill fill-g" data-t="92"></div></div><div class="sbar-num">92%</div></div>
+        <div class="sbar"><div class="sbar-label">Discovery Depth</div><div class="sbar-track"><div class="sbar-fill fill-a" data-t="88"></div></div><div class="sbar-num">88%</div></div>
+      </div>
+
+      <div class="summary-text">The user demonstrated exceptional command of competitive positioning, ROI articulation, and platform differentiation. Strong pivot handling and natural discovery flow throughout. Consistently high sentiment from the prospect persona.</div>
+
+      <div class="eval-grid">
+        <div class="eval-panel done"><h3>Things Done Well</h3><ul>
+          <li>Positioned real-time guidance vs. post-call analytics decisively</li>
+          <li>Connected ROI to behavior change, not just feature adoption</li>
+          <li>Articulated closed-loop value naturally without sounding rehearsed</li>
+        </ul></div>
+        <div class="eval-panel focus"><h3>Where to Focus Next</h3><ul>
+          <li>Deepen discovery before leading with differentiation</li>
+          <li>Tailor value propositions to the persona's specific workflow pain</li>
+          <li>Work toward a clear, mutually agreed next step</li>
+        </ul></div>
+      </div>
+
+      <div class="rubric"><div class="rubric-title">Opening & Relevance</div>
+        <div class="rubric-row"><span class="lbl green">What worked:</span> Immediately framed the conversation around the prospect's evaluation criteria.</div>
+        <div class="rubric-row"><span class="lbl amber">What to improve:</span> Confirm the prospect's current stage before positioning.</div>
+        <div class="rubric-row"><span class="lbl blue">Try next time:</span> "What prompted this evaluation now?"</div>
+      </div>
+      <div class="rubric"><div class="rubric-title">Discovery & Listening</div>
+        <div class="rubric-row"><span class="lbl green">What worked:</span> Asked layered questions that surfaced frustration with siloed tools.</div>
+        <div class="rubric-row"><span class="lbl amber">What to improve:</span> Ask more follow-up questions before introducing features.</div>
+      </div>
+      <div class="rubric"><div class="rubric-title">Articulating Value</div>
+        <div class="rubric-row"><span class="lbl green">What worked:</span> Linked platform features to specific business outcomes the prospect mentioned.</div>
+        <div class="rubric-row"><span class="lbl green">What worked:</span> Positioned the closed-loop as a competitive moat, not just a feature.</div>
+      </div>
+      <div class="rubric"><div class="rubric-title">Handling Resistance</div>
+        <div class="rubric-row"><span class="lbl green">What worked:</span> Reframed objections as opportunities to demonstrate unique value.</div>
+        <div class="rubric-row"><span class="lbl amber">What to improve:</span> ROI response was strong but could be more numerically specific.</div>
+      </div>
+
+      <div class="replay"><h2>Replay moments</h2>
+        <div class="rp-card"><div class="rp-num">#1 · Competitive Pivot</div><div class="rp-title">Gong comparison — real-time vs. post-call positioning</div><div class="rp-desc">Drew a clear line between post-call visibility and live guidance. Prospect's tone shifted positively.</div><div class="rp-link">Jump to transcript →</div></div>
+        <div class="rp-card"><div class="rp-num">#2 · ROI Reframe</div><div class="rp-title">Connected practice data to live execution outcomes</div><div class="rp-desc">Linked behavior change in roleplay to real-call outcomes. Strong emotional resonance from the prospect.</div><div class="rp-link">Jump to transcript →</div></div>
+        <div class="rp-card"><div class="rp-num">#3 · Platform Differentiation</div><div class="rp-title">Closed-loop positioning against point solutions</div><div class="rp-desc">Articulated that no other platform connects practice to live execution, creating a clear "only we do this" moment.</div><div class="rp-link">Jump to transcript →</div></div>
+      </div>
+
+      <!-- ═══ WINNING TALK TRACKS ═══ -->
+      <div class="wtt" id="wtt-section">
+        <h2>Winning Talk Tracks <span class="feat">New · Flywheel</span></h2>
+        <div class="wtt-sub">Extracted from this session based on &gt;90% overall score and positive sentiment spikes. Recommend directly to Moments™ for manager approval.</div>
+
+        <div class="wtt-card" id="wc-0">
+          <div class="wtt-top">
+            <span class="chip chip-top">Top-Scoring Talk Track</span>
+            <span class="chip chip-comp">Gong Competitor Mention</span>
+            <span class="wtt-ts">2:34 into session</span>
+          </div>
+          <div class="wtt-quote">"Gong gives you post-call visibility after the conversation ends, but Revenue.io provides real-time guidance on the live call before the deal is lost."</div>
+          <div class="wtt-shift">↑ Prospect sentiment 89 → 97</div>
+          <div class="wtt-actions"><button class="btn btn-primary btn-sm" id="wb-0" onclick="sendToMoments(0)">⚡ Recommend to Moments™</button></div>
+        </div>
+        <div class="wtt-card" id="wc-1">
+          <div class="wtt-top">
+            <span class="chip chip-top">Top-Scoring Talk Track</span>
+            <span class="chip chip-obj">ROI Skepticism</span>
+            <span class="wtt-ts">5:12 into session</span>
+          </div>
+          <div class="wtt-quote">"The ROI isn't just in what your reps learn — it's in what they actually say differently the next day. Roleplay builds the muscle, Moments™ fires it at the right time."</div>
+          <div class="wtt-shift">↑ Prospect sentiment 84 → 93</div>
+          <div class="wtt-actions"><button class="btn btn-primary btn-sm" id="wb-1" onclick="sendToMoments(1)">⚡ Recommend to Moments™</button></div>
+        </div>
+        <div class="wtt-card" id="wc-2">
+          <div class="wtt-top">
+            <span class="chip chip-top">Top-Scoring Talk Track</span>
+            <span class="chip chip-diff">Platform Differentiation</span>
+            <span class="wtt-ts">8:47 into session</span>
+          </div>
+          <div class="wtt-quote">"Most teams measure conversation intelligence after the fact. We're the only platform that closes the loop from practice to live execution in the same workflow."</div>
+          <div class="wtt-shift">↑ Prospect sentiment 81 → 96</div>
+          <div class="wtt-actions"><button class="btn btn-primary btn-sm" id="wb-2" onclick="sendToMoments(2)">⚡ Recommend to Moments™</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transcript -->
+    <div class="session-transcript">
+      <div class="tx-hdr">Transcript <input class="tx-search" placeholder="🔍 Search..." type="text"></div>
+      <div class="tx-body">
+        <div class="tx-msg tx-ai"><div class="tx-sender">James <span class="tx-time">0:00</span></div><div class="tx-bubble">Hello, this is James. I've got about fifteen minutes before my next internal. What can I do for you?</div></div>
+        <div class="tx-msg tx-rep"><div class="tx-sender">Hayden Brown <span class="tx-time">0:12</span></div><div class="tx-bubble">Hey James, this is Hayden. I wanted to follow up on what you asked about Revenue.io — thought I'd walk you through how we help teams like yours.</div></div>
+        <div class="tx-msg tx-ai"><div class="tx-sender">James <span class="tx-time">0:28</span></div><div class="tx-bubble">I appreciate the follow-up, but we aren't really at the "purchasing" stage yet. We're currently solving some visibility issues. What exactly are you bringing that's different from what we're already using?</div></div>
+        <div class="tx-msg tx-rep"><div class="tx-sender">Hayden Brown <span class="tx-time">0:48</span></div><div class="tx-bubble">Great question — and that's exactly where we start. What tools are you using today for call coaching or conversation intelligence?</div></div>
+        <div class="tx-msg tx-ai"><div class="tx-sender">James <span class="tx-time">1:05</span></div><div class="tx-bubble">We've been evaluating Gong. The team likes the recording and analytics side. But honestly, I'm not sure any of these tools actually change what reps say on calls. It's all retrospective.</div></div>
+        <div class="tx-msg tx-rep"><div class="tx-sender">Hayden Brown <span class="tx-time">1:30</span></div><div class="tx-bubble">That's a really sharp observation — and it's the exact gap we close. Let me show you the difference.</div></div>
+        <div class="tx-msg tx-rep tx-highlight" id="tx-hl-0"><div class="tx-sender">Hayden Brown <span class="tx-time">2:34 · ⚡ Winning Talk Track</span></div><div class="tx-bubble">"Gong gives you post-call visibility after the conversation ends, but Revenue.io provides real-time guidance on the live call before the deal is lost."</div></div>
+        <div class="tx-msg tx-ai"><div class="tx-sender">James <span class="tx-time">3:10</span></div><div class="tx-bubble">That's actually an interesting distinction. So you're saying your platform is actively prompting reps during the call? How does that work without being distracting?</div></div>
+        <div class="tx-msg tx-rep"><div class="tx-sender">Hayden Brown <span class="tx-time">3:30</span></div><div class="tx-bubble">It's subtle — non-intrusive cards that appear when specific triggers fire. A competitor mention, an objection, a pricing question. The rep sees exactly what to say, when to say it.</div></div>
+        <div class="tx-msg tx-ai"><div class="tx-sender">James <span class="tx-time">4:45</span></div><div class="tx-bubble">Our leadership keeps asking me to prove ROI on enablement tools. "We spent $X on coaching — show me the number." Can you actually tie this to revenue?</div></div>
+        <div class="tx-msg tx-rep tx-highlight" id="tx-hl-1"><div class="tx-sender">Hayden Brown <span class="tx-time">5:12 · ⚡ Winning Talk Track</span></div><div class="tx-bubble">"The ROI isn't just in what your reps learn — it's in what they actually say differently the next day. Roleplay builds the muscle, Moments™ fires it at the right time."</div></div>
+        <div class="tx-msg tx-ai"><div class="tx-sender">James <span class="tx-time">5:55</span></div><div class="tx-bubble">I like that framing. But there are a lot of tools claiming they're "all-in-one." What actually makes you different from the fifteen others pitching me this quarter?</div></div>
+        <div class="tx-msg tx-rep"><div class="tx-sender">Hayden Brown <span class="tx-time">6:15</span></div><div class="tx-bubble">Fair question. Here's the honest answer — most of them do one thing well. Record, analyze, score. We do all of that. But none of them do this:</div></div>
+        <div class="tx-msg tx-rep tx-highlight" id="tx-hl-2"><div class="tx-sender">Hayden Brown <span class="tx-time">8:47 · ⚡ Winning Talk Track</span></div><div class="tx-bubble">"Most teams measure conversation intelligence after the fact. We're the only platform that closes the loop from practice to live execution in the same workflow."</div></div>
+        <div class="tx-msg tx-ai"><div class="tx-sender">James <span class="tx-time">9:15</span></div><div class="tx-bubble">Okay, that's compelling. I'd want to see it working — can you set up a demo with my team lead?</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ MOMENTS™ CONSOLE ══════ -->
+<div class="page" id="page-moments">
+  <div class="moments-page">
+    <h1>Moments™ Console</h1>
+    <div class="page-sub">AI-recommended talk tracks from Revenue Roleplay AI sessions. Human approval required before anything goes live.</div>
+
+    <div class="stats-grid">
+      <div class="stat"><div class="stat-label">Sessions Analyzed</div><div class="stat-val">42</div><div class="stat-delta">↑ 18 vs. last month</div></div>
+      <div class="stat"><div class="stat-label">Talk Tracks Extracted</div><div class="stat-val">14</div><div class="stat-delta">↑ 5 new this week</div></div>
+      <div class="stat"><div class="stat-label">Pending Approval</div><div class="stat-val" id="stat-pending-m">3</div><div class="stat-delta neutral">Awaiting review</div></div>
+      <div class="stat"><div class="stat-label">Avg Sentiment Lift</div><div class="stat-val">+19%</div><div class="stat-delta">Across approved cards</div></div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+      <div style="font-size:15px;font-weight:700">Recommended Talk Tracks</div>
+      <div style="font-size:12px;color:var(--muted-fg)">Source: Revenue Roleplay AI · Aug 2026</div>
+    </div>
+
+    <div id="rec-list">
+      <div class="rec-card" id="rc-1"><div class="rec-head"><div><div class="rec-eye">Suggested update for trigger</div><div class="rec-trigger">Budget Timing Objection</div><div class="rec-from">Aggregated from 38 high-scoring sessions this month</div></div><div class="rec-source"><strong>+17%</strong> sentiment shift</div></div><div class="rec-body"><div class="rec-quote" id="rq-1">"I hear you on timing — but the teams that wait for perfect budget alignment end up spending 3x more retraining reps who already forgot what they learned."</div><textarea class="rec-edit hidden" id="re-1">"I hear you on timing — but the teams that wait for perfect budget alignment end up spending 3x more retraining reps who already forgot what they learned."</textarea><div class="rec-actions" id="ra-1"><button class="btn btn-success btn-sm" onclick="approveRec('rc-1','rq-1','Budget Timing Objection')">✓ Approve & Publish</button><button class="btn btn-ghost btn-sm" onclick="editRec('rq-1','re-1','ra-1','rea-1')">Edit Wording</button><button class="btn btn-danger btn-sm" onclick="dismissRec('rc-1')">Dismiss</button></div><div class="rec-actions hidden" id="rea-1"><button class="btn btn-success btn-sm" onclick="saveRec('rc-1','rq-1','re-1','ra-1','rea-1','Budget Timing Objection')">Save & Publish</button><button class="btn btn-ghost btn-sm" onclick="cancelEdit('rq-1','re-1','ra-1','rea-1')">Cancel</button></div></div></div>
+      <div class="rec-card" id="rc-2"><div class="rec-head"><div><div class="rec-eye">Suggested update for trigger</div><div class="rec-trigger">Security & Compliance Concern</div><div class="rec-from">Aggregated from 24 high-scoring sessions this month</div></div><div class="rec-source"><strong>+14%</strong> sentiment shift</div></div><div class="rec-body"><div class="rec-quote" id="rq-2">"We're SOC 2 Type II certified, and every AI interaction stays within your org boundary — your reps' practice data never trains external models."</div><textarea class="rec-edit hidden" id="re-2">"We're SOC 2 Type II certified, and every AI interaction stays within your org boundary — your reps' practice data never trains external models."</textarea><div class="rec-actions" id="ra-2"><button class="btn btn-success btn-sm" onclick="approveRec('rc-2','rq-2','Security & Compliance Concern')">✓ Approve & Publish</button><button class="btn btn-ghost btn-sm" onclick="editRec('rq-2','re-2','ra-2','rea-2')">Edit Wording</button><button class="btn btn-danger btn-sm" onclick="dismissRec('rc-2')">Dismiss</button></div><div class="rec-actions hidden" id="rea-2"><button class="btn btn-success btn-sm" onclick="saveRec('rc-2','rq-2','re-2','ra-2','rea-2','Security & Compliance Concern')">Save & Publish</button><button class="btn btn-ghost btn-sm" onclick="cancelEdit('rq-2','re-2','ra-2','rea-2')">Cancel</button></div></div></div>
+      <div class="rec-card" id="rc-3"><div class="rec-head"><div><div class="rec-eye">Suggested update for trigger</div><div class="rec-trigger">Multi-Year Commitment Hesitation</div><div class="rec-from">Aggregated from 19 high-scoring sessions this month</div></div><div class="rec-source"><strong>+12%</strong> sentiment shift</div></div><div class="rec-body"><div class="rec-quote" id="rq-3">"We don't ask you to commit long-term before you see results. Start with a single team — most customers expand within one quarter because the data speaks for itself."</div><textarea class="rec-edit hidden" id="re-3">"We don't ask you to commit long-term before you see results. Start with a single team — most customers expand within one quarter because the data speaks for itself."</textarea><div class="rec-actions" id="ra-3"><button class="btn btn-success btn-sm" onclick="approveRec('rc-3','rq-3','Multi-Year Commitment Hesitation')">✓ Approve & Publish</button><button class="btn btn-ghost btn-sm" onclick="editRec('rq-3','re-3','ra-3','rea-3')">Edit Wording</button><button class="btn btn-danger btn-sm" onclick="dismissRec('rc-3')">Dismiss</button></div><div class="rec-actions hidden" id="rea-3"><button class="btn btn-success btn-sm" onclick="saveRec('rc-3','rq-3','re-3','ra-3','rea-3','Multi-Year Commitment Hesitation')">Save & Publish</button><button class="btn btn-ghost btn-sm" onclick="cancelEdit('rq-3','re-3','ra-3','rea-3')">Cancel</button></div></div></div>
+    </div>
+
+    <div class="empty-state hidden" id="empty-state"><div class="e-icon">✅</div><h3>All caught up</h3><p>No pending recommendations. New talk tracks surface here automatically as sessions are analyzed.</p></div>
+
+    <div id="pub-section" style="display:none"><div class="pub-section">
+      <div style="font-size:15px;font-weight:700;margin-bottom:14px">Published Live Cards</div>
+      <div id="pub-list"></div>
+      <div class="preview-wrap">
+        <div class="preview-label">How it surfaces during a live call</div>
+        <div class="preview-shell">
+          <div class="preview-topbar">⚡ Moments™ — Live on Call</div>
+          <div class="preview-body">
+            <div class="preview-type">Info · Guidance Prompt</div>
+            <div class="preview-name" id="pv-name">Budget Timing Objection</div>
+            <div class="preview-content" id="pv-content">I hear you on timing — but the teams that wait for perfect budget alignment end up spending 3x more retraining reps who already forgot what they learned.</div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<div class="toast" id="toast"><div class="toast-title" id="toast-title"></div><div class="toast-sub" id="toast-sub"></div><button class="toast-action" id="toast-action"></button></div>
+
+<script>
+/* ═══ DATA ═══ */
+const SESSIONS=[
+  {initials:'JM',name:'Jordan Mitchell',role:'Account Executive',color:'hsl(231 90% 60%)',score:94,scenario:'Competitive Evaluation: Revenue.io vs. Gong',date:'Aug 19',tracks:3,difficulty:'Hard'},
+  {initials:'MC',name:'Marcus Chen',role:'Account Executive',color:'hsl(258 55% 56%)',score:96,scenario:'Enterprise Multi-Stakeholder Deal',date:'Aug 17',tracks:4,difficulty:'Hard'},
+  {initials:'SP',name:'Sara Patel',role:'Senior SDR',color:'hsl(174 60% 40%)',score:91,scenario:'Pricing & Contract Objections',date:'Aug 18',tracks:2,difficulty:'Medium'},
+  {initials:'AT',name:'Aisha Thompson',role:'Account Executive',color:'hsl(38 85% 50%)',score:93,scenario:'ROI & Business Case Presentation',date:'Aug 16',tracks:2,difficulty:'Hard'},
+  {initials:'TB',name:'Tyler Brooks',role:'SDR',color:'hsl(152 56% 42%)',score:90,scenario:'Discovery & Qualification Call',date:'Aug 15',tracks:3,difficulty:'Easy'},
+];
+const TRACKS=[
+  {trigger:'Gong Competitor Mention',quote:'Gong gives you post-call visibility after the conversation ends, but Revenue.io provides real-time guidance on the live call before the deal is lost.',ts:'2:34',delta:'+22%'},
+  {trigger:'ROI Skepticism',quote:'The ROI isn\'t just in what your reps learn — it\'s in what they actually say differently the next day. Roleplay builds the muscle, Moments™ fires it at the right time.',ts:'5:12',delta:'+18%'},
+  {trigger:'Platform Differentiation',quote:'Most teams measure conversation intelligence after the fact. We\'re the only platform that closes the loop from practice to live execution in the same workflow.',ts:'8:47',delta:'+15%'},
+];
+
+/* ═══ STATE ═══ */
+let pendingCount=3,recCounter=10;const sentTracks=new Set();
+
+/* ═══ RENDER SESSION CARDS ═══ */
+function renderSessionCards(){
+  document.getElementById('qs-grid').innerHTML=SESSIONS.map((s,i)=>`
+    <div class="qs-card" onclick="goPage('session',document.querySelectorAll('.sb-item')[1])">
+      <div class="qs-card-top">
+        <div class="qs-card-avatar" style="background:${s.color}">${s.initials}</div>
+        <div><div class="qs-card-name">${s.name}</div><div class="qs-card-role">${s.role}</div></div>
+        <div class="qs-card-score ${s.score>=92?'score-high':'score-mid'}">${s.score}%</div>
+      </div>
+      <div class="qs-card-scenario">${s.scenario}</div>
+      <div class="qs-card-bottom">
+        <span>${s.date}</span>
+        <span class="chip chip-${s.difficulty==='Easy'?'easy':'hard'}">${s.difficulty}</span>
+        <span class="qs-tracks">${s.tracks} talk tracks</span>
+      </div>
+    </div>`).join('');
+}
+
+/* ═══ NAV ═══ */
+function goPage(name,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  if(name==='session')animateSession();
+}
+
+/* ═══ SESSION ANIMATIONS ═══ */
+let animated=false;
+function animateSession(){
+  if(animated)return;animated=true;
+  // Score ring
+  const arc=document.getElementById('score-arc');
+  const pct=94/100;
+  setTimeout(()=>{arc.style.transition='stroke-dashoffset 1s cubic-bezier(.22,.61,.36,1)';arc.style.strokeDashoffset=213.6*(1-pct)},80);
+  // Score bars
+  setTimeout(()=>{document.querySelectorAll('.sbar-fill').forEach(el=>{el.style.width=el.dataset.t+'%'})},120);
+}
+
+/* ═══ SEND TO MOMENTS ═══ */
+function sendToMoments(idx){
+  if(sentTracks.has(idx))return;sentTracks.add(idx);
+  const btn=document.getElementById('wb-'+idx);
+  btn.textContent='✓ Sent to Moments™';btn.className='btn btn-sm btn-sent';btn.disabled=true;
+
+  // Animate particle from button to sidebar badge
+  const btnRect=btn.getBoundingClientRect();
+  const badge=document.getElementById('sb-badge');
+  const badgeRect=badge.getBoundingClientRect();
+  const particle=document.createElement('div');
+  particle.className='transfer-particle';
+  particle.style.left=btnRect.left+'px';particle.style.top=btnRect.top+'px';
+  document.body.appendChild(particle);
+  requestAnimationFrame(()=>{
+    particle.style.transition='left .6s cubic-bezier(.4,0,.2,1),top .6s cubic-bezier(.4,0,.2,1),opacity .6s';
+    particle.style.left=badgeRect.left+'px';particle.style.top=badgeRect.top+'px';
+    particle.style.opacity='0';
+  });
+  setTimeout(()=>particle.remove(),700);
+
+  pendingCount++;updateBadges();
+  // Pulse badge
+  badge.classList.add('pulse');setTimeout(()=>badge.classList.remove('pulse'),300);
+
+  // Flash the transcript highlight
+  const hl=document.getElementById('tx-hl-'+idx);
+  if(hl){hl.style.background='hsl(152 56% 42%/.15)';setTimeout(()=>hl.style.background='',800)}
+
+  // Add to console
+  const t=TRACKS[idx],id='rc-d'+(++recCounter);
+  const rqId='rq-'+id,reId='re-'+id,raId='ra-'+id,reaId='rea-'+id;
+  const div=document.createElement('div');div.className='rec-card entering';div.id=id;
+  div.innerHTML=`<div class="rec-head new-head"><div><div class="rec-eye">Suggested update for trigger</div><div class="rec-trigger">${t.trigger} <span class="new-pill">NEW</span></div><div class="rec-from">From: James Park session · Aug 19, 2026 · ${t.ts} in</div></div><div class="rec-source"><strong>${t.delta}</strong> sentiment shift</div></div><div class="rec-body"><div class="rec-quote" id="${rqId}">"${t.quote}"</div><textarea class="rec-edit hidden" id="${reId}">"${t.quote}"</textarea><div class="rec-actions" id="${raId}"><button class="btn btn-success btn-sm" onclick="approveRec('${id}','${rqId}','${t.trigger}')">✓ Approve & Publish</button><button class="btn btn-ghost btn-sm" onclick="editRec('${rqId}','${reId}','${raId}','${reaId}')">Edit Wording</button><button class="btn btn-danger btn-sm" onclick="dismissRec('${id}')">Dismiss</button></div><div class="rec-actions hidden" id="${reaId}"><button class="btn btn-success btn-sm" onclick="saveRec('${id}','${rqId}','${reId}','${raId}','${reaId}','${t.trigger}')">Save & Publish</button><button class="btn btn-ghost btn-sm" onclick="cancelEdit('${rqId}','${reId}','${raId}','${reaId}')">Cancel</button></div></div>`;
+  const list=document.getElementById('rec-list');list.insertBefore(div,list.firstChild);
+  document.getElementById('empty-state').classList.add('hidden');
+
+  showToast('✓ Sent to Moments™ review queue',`"${t.trigger}" — awaiting manager approval`,'View in Moments™ Console →',()=>goPage('moments',document.querySelectorAll('.sb-item')[8]));
+}
+
+/* ═══ MOMENTS ACTIONS ═══ */
+function approveRec(cid,rqId,trigger){
+  const text=document.getElementById(rqId).textContent.replace(/^"|"$/g,'');
+  addPublished(trigger,text);removeCard(cid);pendingCount=Math.max(0,pendingCount-1);updateBadges();
+}
+function dismissRec(cid){removeCard(cid);pendingCount=Math.max(0,pendingCount-1);updateBadges()}
+function editRec(rqId,reId,raId,reaId){document.getElementById(rqId).classList.add('hidden');document.getElementById(reId).classList.remove('hidden');document.getElementById(raId).classList.add('hidden');document.getElementById(reaId).classList.remove('hidden');document.getElementById(reId).focus()}
+function cancelEdit(rqId,reId,raId,reaId){document.getElementById(rqId).classList.remove('hidden');document.getElementById(reId).classList.add('hidden');document.getElementById(raId).classList.remove('hidden');document.getElementById(reaId).classList.add('hidden')}
+function saveRec(cid,rqId,reId,raId,reaId,trigger){document.getElementById(rqId).textContent=document.getElementById(reId).value.trim();cancelEdit(rqId,reId,raId,reaId);approveRec(cid,rqId,trigger)}
+function removeCard(cid){const c=document.getElementById(cid);if(!c)return;c.classList.add('leaving');setTimeout(()=>{c.remove();if(!document.querySelectorAll('#rec-list .rec-card').length)document.getElementById('empty-state').classList.remove('hidden')},300)}
+function addPublished(trigger,text){
+  const d=document.createElement('div');d.className='pub-card';
+  d.innerHTML=`<div class="pub-info"><div class="pub-trigger">${trigger}</div><div class="pub-text">"${text}"</div></div><div class="live-badge">LIVE</div>`;
+  document.getElementById('pub-list').prepend(d);document.getElementById('pub-section').style.display='';
+  document.getElementById('pv-name').textContent=trigger;document.getElementById('pv-content').textContent=text;
+}
+
+/* ═══ BADGES ═══ */
+function updateBadges(){
+  const n=pendingCount,b=document.getElementById('sb-badge');
+  b.textContent=n||'✓';b.className=n?'sb-badge':'sb-badge done';
+  const sp=document.getElementById('stat-pending');if(sp)sp.textContent=n;
+  const sm=document.getElementById('stat-pending-m');if(sm)sm.textContent=n;
+}
+
+/* ═══ TOAST ═══ */
+let toastTimer;
+function showToast(title,sub,actionLabel,actionFn){
+  document.getElementById('toast-title').textContent=title;
+  document.getElementById('toast-sub').textContent=sub;
+  const a=document.getElementById('toast-action');
+  if(actionLabel){a.textContent=actionLabel;a.style.display='block';a.onclick=()=>{document.getElementById('toast').classList.remove('show');actionFn?.()}}
+  else a.style.display='none';
+  clearTimeout(toastTimer);document.getElementById('toast').classList.add('show');
+  toastTimer=setTimeout(()=>document.getElementById('toast').classList.remove('show'),5000);
+}
+
+/* ═══ INIT ═══ */
+renderSessionCards();
+</script>
