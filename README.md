@@ -22,7 +22,7 @@ edits, or dismisses them before anything reaches a live call.
 | 1 | Practice | Reps complete scored AI-coached roleplay sessions |
 | 2 | Analyze | Sessions >90% surface phrases that moved prospect sentiment |
 | 3 | Recommend | Talk tracks queue in the Moments™ console for review |
-| 4 | Approve | A human approves, edits, or dismisses — nothing auto-publishes |
+| 4 | Approve | A human approves, edits, or dismisses, nothing is auto-published |
 | 5 | Execute | Approved cards surface to reps during live calls |
 
 Step 4 is deliberate. There is no path in this design where AI-generated copy
@@ -30,7 +30,7 @@ reaches a live call without a manager approving it first.
 
 ## Running it
 
-Open `index.html` in any browser. No build step, no server, no install.
+Open `index.html` in any browser.
 
 ## Demo walkthrough
 
@@ -38,14 +38,13 @@ Open `index.html` in any browser. No build step, no server, no install.
 2. **Roleplay** — session detail: scoring breakdown, transcript, and the new
    Winning Talk Tracks section
 3. Click **⚡ Recommend to Moments™** — the track transfers to the review queue
-   (toast confirmation, sidebar badge increments)
 4. **Moments™ Console** — the new recommendation arrives flagged `NEW`
 5. Click **✓ Approve & Publish** — it moves to Published Live Cards, with a
    preview of how it surfaces mid-call
 
 ## Built with
 
-Vanilla **HTML / CSS / JavaScript** in a single self-contained file — no
+Vanilla **HTML / CSS / JavaScript** in a single self-contained file, no
 frameworks, no libraries, no build tooling. The only external resource is the
 Inter typeface from Google Fonts.
 
@@ -62,5 +61,5 @@ model actually performing the extraction. Its purpose is to specify intended
 behavior and layout for the product and engineering teams.
 
 Revenue Roleplay AI is a React application, so production components would be
-rebuilt — the transferable assets here are the interaction design, the flow, and
+rebuilt. The transferable assets here are the interaction design, the flow, and
 the design tokens.
